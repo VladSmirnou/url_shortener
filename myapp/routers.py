@@ -35,11 +35,11 @@ def index():
 
         if not url:
             flash('The URL is required!')
-            return redirect(url_for('.index'))
+            return redirect(url_for('main.index'))
 
         if len(ShortUrl.query.all()) >= 20:
             flash('Too many URLs in the database')
-            return redirect(url_for('.index'))
+            return redirect(url_for('main.index'))
 
         url_data = ShortUrl(original_url=url)
 
@@ -51,7 +51,7 @@ def index():
         db.session.add(url_data)
         db.session.commit()
         flash(f'URL {url_data.original_url} was added to the database')
-        return redirect(url_for('.home_page'))
+        return redirect(url_for('main.home_page'))
 
     return render_template('url_form.html')
 
@@ -69,5 +69,5 @@ def url_redirect(url_id):
     
     else:
         flash('Invalid URL')
-        return redirect(url_for('.home_page'))
+        return redirect(url_for('main.home_page'))
     
