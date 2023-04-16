@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if urls %}
+        {% for url in urls %}
+            <div>
+                Long: {{ url.original_url }} | Short: {{ url.short_url }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+<a href="/">Home page</a>
+{% endblock %}

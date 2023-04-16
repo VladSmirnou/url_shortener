@@ -4,16 +4,19 @@
     <h1>{% block title %} Add URL {% endblock %}</h1>
     <form method="post">
         <div class="form-group">
-            <input type="text" name="url"
-                placeholder="URL to shorten" class="form-control"
-                value="{{ request.form['url'] }}" autofocus></input>
+            <input
+            type="text"
+            name="url"
+            placeholder="URL to shorten"
+            class="form-control"autofocus
+            ></input>
         </div>
 
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
-
+    <a href="/">Home page</a>
     {% if short_url %}
     <hr>
     <span>{{ short_url }}</span>
