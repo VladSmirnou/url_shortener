@@ -37,11 +37,11 @@ def index():
             flash('The URL is required!')
             return redirect(url_for('main.index'))
 
-        if len(ShortUrl.query.all()) >= 20:
+        if res:= len(ShortUrl.query.all()) >= 20:
             flash('Too many URLs in the database')
             return redirect(url_for('main.index'))
 
-        url_data = ShortUrl(original_url=url)
+        url_data = ShortUrl(id=res + 1, original_url=url)
 
         hashid = hashids.encode(url_data.id)
         short_url = request.host_url + hashid
