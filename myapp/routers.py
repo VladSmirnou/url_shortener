@@ -32,16 +32,17 @@ def index():
 
     if request.method == 'POST':
         url = request.form['url']
-
+        all_urls = ShortUrl.query.all()
+        
         if not url:
             flash('The URL is required!')
             return redirect(url_for('main.index'))
 
-        if (res:= len(ShortUrl.query.all())) >= 20:
+        if len(all_urls) >= 20:
             flash('Too many URLs in the database')
             return redirect(url_for('main.index'))
 
-        url_data = ShortUrl(id=res + 1, original_url=url)
+        url_data = ShortUrl(id=len(all_urls) + 1, original_url=url)
 
         hashid = hashids.encode(url_data.id)
         short_url = request.host_url + hashid
