@@ -37,7 +37,7 @@ def index():
             flash('The URL is required!')
             return redirect(url_for('main.index'))
 
-        if res:= len(ShortUrl.query.all()) >= 20:
+        if (res:= len(ShortUrl.query.all())) >= 20:
             flash('Too many URLs in the database')
             return redirect(url_for('main.index'))
 
