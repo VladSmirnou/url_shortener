@@ -73,7 +73,7 @@ docs/_build/
 
 # PyBuilder
 target/
-
+instance/
 
 ### Django ###
 *.log
@@ -85,3 +85,4 @@ local_settings.py
 .venv
 .env
 db.sqlite3
+fix.txt

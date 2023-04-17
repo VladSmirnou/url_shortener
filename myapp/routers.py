@@ -7,14 +7,15 @@ from flask import (
     url_for,
     Blueprint
 )
+
 from .models import ShortUrl
 from .extentions import db
-import uuid
+from .settings import env
 
 
 main = Blueprint('main', __name__)
 
-hashids = Hashids(min_length=4, salt=str(uuid.uuid4))
+hashids = Hashids(min_length=4, salt=env.str('SECRET_KEY'))
 
 @main.route('/', methods=('GET',))
 def home_page():
@@ -32,18 +33,23 @@ def index():
 
     if request.method == 'POST':
         url = request.form['url']
-        all_urls = ShortUrl.query.all()
         
         if not url:
             flash('The URL is required!')
             return redirect(url_for('main.index'))
 
+        all_urls = ShortUrl.query.all()
+
         if len(all_urls) >= 20:
             flash('Too many URLs in the database')
             return redirect(url_for('main.index'))
-
-        url_data = ShortUrl(id=len(all_urls) + 1, original_url=url)
-
+        
+        if not all_urls:
+            url_data = ShortUrl(id=1, original_url=url)
+        else:
+            last_url = all_urls[-1]
+            url_data = ShortUrl(id=last_url.id + 1, original_url=url)
+            
         hashid = hashids.encode(url_data.id)
         short_url = request.host_url + hashid
 
