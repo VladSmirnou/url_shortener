@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <a href="{{ url_for('main.shotr_url') }}">Short URL</a>
+    </div>
+    <div>
+        <a href="{{ url_for('main.display_url_list') }}">URL List</a>
+    </div>
+{% endblock %}

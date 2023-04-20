@@ -1,4 +1,4 @@
-from myapp import create_app
+from short_url_app import create_app
 
 
 app = create_app()

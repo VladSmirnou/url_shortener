@@ -1,4 +1,3 @@
-from hashids import Hashids
 from flask import (
     render_template, 
     request, 
@@ -10,12 +9,10 @@ from flask import (
 
 from .models import ShortUrl
 from .extentions import db
-from .settings import env
+from flask import current_app
 
 
 main = Blueprint('main', __name__)
-
-hashids = Hashids(min_length=4, salt=env.str('SECRET_KEY'))
 
 @main.route('/', methods=('GET',))
 def home_page():
@@ -28,9 +25,8 @@ def display_url_list():
     return render_template('url_list.html', urls=urls)
 
 
-@main.route('/shorturl', methods=('GET', 'POST'))
-def index():
-
+@main.route('/short_url', methods=('GET', 'POST'))
+def shotr_url():
     if request.method == 'POST':
         url = request.form['url']
         
@@ -44,18 +40,12 @@ def index():
             flash('Too many URLs in the database')
             return redirect(url_for('main.index'))
         
-        if not all_urls:
-            url_data = ShortUrl(id=1, original_url=url)
-        else:
-            last_url = all_urls[-1]
-            url_data = ShortUrl(id=last_url.id + 1, original_url=url)
-            
-        hashid = hashids.encode(url_data.id)
-        short_url = request.host_url + hashid
-
-        url_data.short_url = short_url
-
+        url_data = ShortUrl(original_url=url)
         db.session.add(url_data)
+        db.session.commit()
+        hashid = current_app.config['HASHIDS'].encode(url_data.id)
+        short_url = request.host_url + hashid
+        url_data.short_url = short_url
         db.session.commit()
         flash(f'URL {url_data.original_url} was added to the database')
         return redirect(url_for('main.home_page'))
@@ -65,16 +55,11 @@ def index():
 
 @main.route('/<url_id>')
 def url_redirect(url_id):
-
-    original_id = hashids.decode(url_id)
+    original_id = current_app.config['HASHIDS'].decode(url_id)
     if original_id:
         original_id = original_id[0]  
-        
         data = ShortUrl.query.get(original_id)
-
         return redirect(data.__dict__['original_url'])
-    
     else:
         flash('Invalid URL')
         return redirect(url_for('main.home_page'))
-    
